@@ -7,7 +7,6 @@ sys.path.insert(1,os.path.abspath('..'))
 sys.path.insert(1,os.path.abspath('../../'))
 from utils.common import set_random_seed,init_experiment,get_callbacks,get_logger
 from datasets.example_dataset import get_loader
-from helpers.logger import Logger
 from criterions.criterion import MasterCriterion
 import lightning.pytorch as pl
 from lightning.pytorch import loggers as pl_loggers
