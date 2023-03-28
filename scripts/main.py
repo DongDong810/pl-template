@@ -11,12 +11,21 @@ from criterions.criterion import MasterCriterion
 import lightning.pytorch as pl
 from lightning.pytorch import loggers as pl_loggers
 
-def main(cfg):
-    # Set random seed
-    # if cfg.mode == 'test' and cfg.random_seed is None:
-    #     cfg.random_seed = 0
-    if cfg.random_seed is not None:
-        set_random_seed(cfg.random_seed)
+if __name__ == '__main__':
+    # import default config file
+    cfg = OmegaConf.merge(OmegaConf.load(f'../configs/default.yaml'),OmegaConf.load('../configs/env.yaml'))
+    # read from command line
+    cfg_cmd = OmegaConf.from_cli()
+    # merge model specific config file
+    if "model" in cfg_cmd  and 'name' in cfg_cmd.model:
+        cfg = OmegaConf.merge(cfg,OmegaConf.load(f'../configs/{cfg_cmd.model.name}.yaml'))
+    else:
+        cfg = OmegaConf.merge(cfg,OmegaConf.load(f'../configs/{cfg.model.name}.yaml'))
+    # merge cfg from command line
+    cfg = OmegaConf.merge(cfg,cfg_cmd)
+
+    # Path configuration & generation
+    init_experiment(cfg)
 
     # Dataloader
     dataloader = {
@@ -44,6 +53,9 @@ def main(cfg):
 
     trainer_args = get_trainer_args(cfg)
     trainer = pl.Trainer(**trainer_args)
+    
+    if trainer.global_rank == 0:
+        trainer.logger.experiment.config.update(OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True))
 
     if cfg.mode == 'train':
         trainer.fit(model=solver,
@@ -54,21 +66,3 @@ def main(cfg):
     elif cfg.mode == 'test':
         trainer.test(model=solver,
                      test_dataloaders=dataloader['test'])
-
-if __name__ == '__main__':
-    # import default config file
-    cfg = OmegaConf.merge(OmegaConf.load(f'../configs/default.yaml'),OmegaConf.load('../configs/env.yaml'))
-    # read from command line
-    cfg_cmd = OmegaConf.from_cli()
-    # merge model specific config file
-    if "model" in cfg_cmd  and 'name' in cfg_cmd.model:
-        cfg = OmegaConf.merge(cfg,OmegaConf.load(f'../configs/{cfg_cmd.model.name}.yaml'))
-    else:
-        cfg = OmegaConf.merge(cfg,OmegaConf.load(f'../configs/{cfg.model.name}.yaml'))
-    # merge cfg from command line
-    cfg = OmegaConf.merge(cfg,cfg_cmd)
-
-    # Path configuration & generation
-    init_experiment(cfg)
-
-    main(cfg)

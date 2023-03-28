@@ -11,7 +11,6 @@ class BaseSolver(pl.LightningModule):
     def __init__(self,cfg,net,criterion):
         super().__init__()
         # basic config
-        self.save_hyperparameters(cfg)
         self.cfg = cfg
         self.net = net
         self.criterion = criterion
@@ -51,7 +50,7 @@ class BaseSolver(pl.LightningModule):
             'lr_scheduler': {
                 'scheduler': scheduler,
                 'interval': 'epoch',
-                'frequency': 1,
+                'frequency': self.cfg.train.check_val_every_n_epoch,
                 'monitor': 'val-total_loss'
             }
         }

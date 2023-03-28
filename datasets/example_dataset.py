@@ -23,7 +23,7 @@ class ExampleDataset(data.Dataset):
             return self.transform(batch_dict)
 
     def _load_data(self):
-        return range(100)
+        return range(10000)
 
     def _get_transform(self):
         # Get transform

@@ -1,4 +1,6 @@
 import numpy as np
+import wandb
+from omegaconf import OmegaConf
 import math
 import random,torch,time,os
 from torch.optim import lr_scheduler
@@ -18,6 +20,12 @@ def set_random_seed(seed):
     torch.cuda.manual_seed_all(seed)
 
 def init_experiment(cfg):
+    # Set random seed
+    # if cfg.mode == 'test' and cfg.random_seed is None:
+    #     cfg.random_seed = 0
+    if cfg.random_seed is not None:
+        set_random_seed(cfg.random_seed)
+
     # set datetime
     if cfg.load.ckpt_path == None:
         ckpt_filename = 'initial'
@@ -95,7 +103,6 @@ def get_callbacks(cfg):
             ModelCheckpoint(
                 dirpath=cfg.path.ckpt_path,
                 filename=f'best_{key}_{{epoch:04d}}',
-                verbose=True,
                 monitor=key,
                 mode=mode,
                 save_top_k=1,
@@ -108,7 +115,6 @@ def get_callbacks(cfg):
         ModelCheckpoint(
             dirpath=cfg.path.ckpt_path,
             filename=f'{{epoch:04d}}',
-            verbose=True,
             every_n_epochs=cfg.saver.save_every_n_epoch
         )
     )
@@ -126,7 +132,7 @@ def get_logger(cfg):
             save_dir=cfg.path.log_path,
         )
         # update wandb config
-        logger.experiment.config.update(cfg)
+        # logger.experiment.config.update(OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True))
 
     else:
         logger = pl_loggers.TensorBoardLogger(
