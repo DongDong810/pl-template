@@ -5,7 +5,7 @@ from omegaconf import OmegaConf
 
 sys.path.insert(1,os.path.abspath('..'))
 sys.path.insert(1,os.path.abspath('../../'))
-from utils.common import set_random_seed,init_experiment,get_callbacks,get_logger
+from utils.setup import set_random_seed,init_experiment,get_callbacks,get_logger,get_trainer_args
 from datasets.example_dataset import get_loader
 from criterions.criterion import MasterCriterion
 import lightning.pytorch as pl
@@ -42,20 +42,8 @@ def main(cfg):
     if cfg.load.ckpt_path is not None:
         solver.load_from_checkpoint(cfg.load.ckpt_path)
 
-    # get custom callback list for trainer
-    callbacks = get_callbacks(cfg)
-    # get logger
-    logger = get_logger(cfg)
-
-    # Let's go!
-    trainer = pl.Trainer(
-        devices=cfg.devices,
-        accelerator="auto",
-        logger=logger,
-        log_every_n_steps=cfg.logger.log_every_n_steps,
-        check_val_every_n_epoch=cfg.train.check_val_every_n_epoch,
-        callbacks=callbacks,
-    )
+    trainer_args = get_trainer_args(cfg)
+    trainer = pl.Trainer(**trainer_args)
 
     if cfg.mode == 'train':
         trainer.fit(model=solver,

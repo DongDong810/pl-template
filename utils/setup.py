@@ -64,6 +64,18 @@ def get_scheduler(sched_mode, optimizer, **sched_params):
     else:
         raise NotImplementedError
     
+def get_trainer_args(cfg):
+    trainer_args = {}
+
+    trainer_args['devices'] = cfg.devices
+    trainer_args['accelerator'] = "auto"
+    trainer_args['logger'] = get_logger(cfg)
+    trainer_args['log_every_n_steps'] = cfg.logger.log_every_n_steps
+    trainer_args['check_val_every_n_epoch'] = cfg.train.check_val_every_n_epoch
+    trainer_args['callbacks'] = get_callbacks(cfg)
+
+    return trainer_args
+    
 def get_callbacks(cfg):
     # return custom callbacks
 
@@ -83,6 +95,7 @@ def get_callbacks(cfg):
             ModelCheckpoint(
                 dirpath=cfg.path.ckpt_path,
                 filename=f'best_{key}_{{epoch:04d}}',
+                verbose=True,
                 monitor=key,
                 mode=mode,
                 save_top_k=1,
@@ -95,6 +108,7 @@ def get_callbacks(cfg):
         ModelCheckpoint(
             dirpath=cfg.path.ckpt_path,
             filename=f'{{epoch:04d}}',
+            verbose=True,
             every_n_epochs=cfg.saver.save_every_n_epoch
         )
     )
@@ -103,7 +117,6 @@ def get_callbacks(cfg):
 
 def get_logger(cfg):
     # return custom logger
-    
     logger = None
 
     if cfg.logger.use_wandb:
@@ -111,6 +124,14 @@ def get_logger(cfg):
             project=cfg.project_name,
             name=cfg.exp_name,
             save_dir=cfg.path.log_path,
+        )
+        # update wandb config
+        logger.experiment.config.update(cfg)
+
+    else:
+        logger = pl_loggers.TensorBoardLogger(
+            save_dir=cfg.path.log_path,
+            name=cfg.exp_name,
         )
 
     return logger

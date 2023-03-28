@@ -3,7 +3,6 @@ import torch.nn as nn
 import os.path as osp
 import numpy as np
 from solvers.base_solver import BaseSolver
-from utils.common import get_optimizer, get_scheduler
 from datasets.example_dataset import get_loader
 
 class Solver(BaseSolver):

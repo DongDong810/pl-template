@@ -5,13 +5,11 @@ train:
   # Epoch
   start_epoch: 0
   end_epoch: 10000
-  check_val_every_n_epoch: 1
-
-  # Batch size & worker
   batch_size: 10
   num_workers: 8
+  check_val_every_n_epoch: 1  # run validation every n epoch
 
-  # Optimizer & Scheduler
+  # Optimizer & Scheduler mode
   optimizer:
     mode: 'adam'
   scheduler:
@@ -19,15 +17,13 @@ train:
 
 # Validation & Visualization
 valid:
-  interval_epoch: 10
-  interval_step: ~
-  visualize_result: true
+  visualize_result: false
   visualize_sample: 1
 
 test:
+  visualize_result: false
   batch_size: 1
   num_workers: 8
-  visualize_result: true
   
 data:
   root: 'DATA_PATH_FOR_THIS_MODEL'

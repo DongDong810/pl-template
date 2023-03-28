@@ -8,11 +8,6 @@ random_seed: ~
 backup_host: 'ciplab@165.132.106.202'
 backup_target: '/media/ssd2/backups/Slot-IID/'
 
-model:
-  name: model_name
-  ver: model_ver
-  solver: solver_ver
-
 path:
   time_format: '%y%m%d_%H%M%S'
   date_time_model: '950112_hhmmss_modelname'
@@ -25,20 +20,19 @@ path:
   log_path: ~     # tensorboard or wandb
   ckpt_path: ~    # model & training state checkpoint
   result_path: ~  # visualization or else...
-  
-logger: # print & save log / tensorboard & wandb logging
-  use_wandb: false
-  wandb:
-    run_name: ~
-    entity: dykim
-  log_every_n_steps: 20
-  ckpt_interval: 10 # interval of epoch (saving ckpt)
+
+model:
+  name: model_name
+  ver: model_ver
+  solver: solver_ver
 
 load:
   ckpt_path: ~      # '../ckpts/220314_1317/refactor_testing_best_MAE_illum.pt'
   load_state: true  # if true, load net,optimizer,scheduler,epoch. if false, load only network
-  strict_load: false
-  wandb_load_path: ~
+  
+logger: # print & save log / tensorboard & wandb logging
+  use_wandb: false
+  log_every_n_steps: 20
 
 train:
   optimizer:

@@ -2,7 +2,7 @@ import torch
 import os
 import os.path as osp
 from torch.nn.parallel import DataParallel as DP
-from utils.common import get_optimizer, get_scheduler
+from utils.setup import get_optimizer, get_scheduler
 import lightning.pytorch as pl
 import subprocess
 from subprocess import DEVNULL, STDOUT
@@ -11,6 +11,7 @@ class BaseSolver(pl.LightningModule):
     def __init__(self,cfg,net,criterion):
         super().__init__()
         # basic config
+        self.save_hyperparameters(cfg)
         self.cfg = cfg
         self.net = net
         self.criterion = criterion
