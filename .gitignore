@@ -127,3 +127,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Custom exclude
+logs/
+ckpts/
+results/
+scripts/wandb
+._*
+*.png
+.DS_Store
+configs/env.yaml
