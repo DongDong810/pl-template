@@ -58,11 +58,15 @@ if __name__ == '__main__':
         trainer.logger.experiment.config.update(OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True))
 
     if cfg.mode == 'train':
-        trainer.fit(model=solver,
-                    train_dataloaders=dataloader['train'],
-                    val_dataloaders=dataloader['valid'],
-                    ckpt_path=cfg.load.ckpt_path if cfg.load.load_state else None)
+        trainer.fit(
+            model=solver,
+            train_dataloaders=dataloader['train'],
+            val_dataloaders=dataloader['valid'],
+            ckpt_path=cfg.load.ckpt_path if cfg.load.load_state else None
+        )
     
     elif cfg.mode == 'test':
-        trainer.test(model=solver,
-                     test_dataloaders=dataloader['test'])
+        trainer.test(
+            model=solver,
+            test_dataloaders=dataloader['test']
+        )
