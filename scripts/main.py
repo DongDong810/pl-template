@@ -42,12 +42,14 @@ if __name__ == '__main__':
     network = network_class(cfg)
     
     # Loss
-    criterion = MasterCriterion(cfg)
+    loss = MasterCriterion(cfg)
 
     # Dynamic Solver module import
     solver_mod = importlib.import_module(f'solvers.{cfg.model.name}_{cfg.model.solver}')
     solver_class = getattr(solver_mod,'Solver')
-    solver = solver_class(cfg,network,criterion)
+    solver = solver_class(net=network,
+                          loss=loss,
+                          **(OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True)))
     
     # Load Network if ckpt_path is given
     if cfg.load.ckpt_path is not None:
@@ -56,9 +58,8 @@ if __name__ == '__main__':
     # Init trainer
     trainer_args = get_trainer_args(cfg)
     trainer = pl.Trainer(**trainer_args)
-
-    # if trainer.global_rank == 0:
-    #     trainer.logger.experiment.config.update(OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True))
+    # save hyperparameters
+    # trainer.logger.experiment.config.update(OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True))
 
     if cfg.mode == 'train':
         trainer.fit(
