@@ -37,8 +37,8 @@ def get_loader(cfg, phase):
     """
 
     dataset = ExampleDataset(cfg, phase)
-    batch_size = cfg.test.batch_size if phase == "test" else cfg.train.batch_size
-    num_workers = cfg.test.num_workers if phase == "test" else cfg.train.num_workers
+    batch_size = cfg.data.batch_size
+    num_workers = cfg.data.num_workers
 
     loader = data.DataLoader(
         dataset,

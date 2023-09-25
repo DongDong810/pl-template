@@ -5,8 +5,6 @@ train:
   # Epoch
   start_epoch: 0
   end_epoch: 10000
-  batch_size: 10
-  num_workers: 8
   check_val_every_n_epoch: 10  # run validation every n epoch
 
   # Optimizer & Scheduler mode
@@ -22,11 +20,11 @@ valid:
 
 test:
   visualize_result: false
-  batch_size: 1
-  num_workers: 8
   
 data:
   root: 'DATA_PATH_FOR_THIS_MODEL'
+  batch_size: 10
+  num_workers: 8
 
 criterion:
   key_pairs:

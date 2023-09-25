@@ -8,6 +8,9 @@ from datasets.example_dataset import get_loader
 class Solver(BaseSolver):
     def __init__(self,cfg,net,criterion):
         super().__init__(cfg,net,criterion)
+        self.cfg = cfg
+        self.net = net
+        self.criterion = criterion
     
     def training_step(self, batch_dict, batch_idx):
         x = batch_dict['x']
@@ -22,7 +25,7 @@ class Solver(BaseSolver):
         # log
         self.log_dict(loss_dict,
                       prog_bar=True,
-                      sync_dist=True if self.cfg.devices > 1 else False)
+                      rank_zero_only=True,)
         
         return loss_dict['train-total_loss']
     
@@ -39,7 +42,7 @@ class Solver(BaseSolver):
         # log
         self.log_dict(loss_dict,
                       prog_bar=True,
-                      sync_dist=True if self.cfg.devices > 1 else False)
+                      rank_zero_only=True,)
     
     def test_step(self, batch_dict, batch_idx):
         x = batch_dict['x']

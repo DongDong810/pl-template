@@ -14,7 +14,7 @@ class MasterCriterion(nn.Module):
         self.mod_dict = {}
         self.mod_dict['l1_loss'] = L1_loss(cfg)
 
-    def forward(self, ret_dict, item_dict, phase):
+    def forward(self, pred_dict, gt_dict, phase):
         
         loss_dict = {}
         total_loss = 0
@@ -23,7 +23,7 @@ class MasterCriterion(nn.Module):
             mod_key = self.cfg.criterion[loss_key].mod
             alpha = self.cfg.criterion[loss_key].alpha
             
-            loss = self.mod_dict[mod_key](ret_dict, item_dict)
+            loss = self.mod_dict[mod_key](pred_dict, gt_dict)
             loss_dict[f'{phase}-{loss_key}'] = loss
             total_loss += (alpha * loss)
         

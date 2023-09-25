@@ -3,7 +3,7 @@ import os
 import os.path as osp
 from torch.nn.parallel import DataParallel as DP
 from utils.setup import get_optimizer, get_scheduler
-import lightning.pytorch as pl
+import pytorch_lightning as pl
 import subprocess
 from subprocess import DEVNULL, STDOUT
 

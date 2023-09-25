@@ -4,29 +4,17 @@ from omegaconf import OmegaConf
 import math
 import random,torch,time,os
 from torch.optim import lr_scheduler
-from lightning.pytorch.callbacks import ModelCheckpoint
-import lightning.pytorch.loggers as pl_loggers
-import matplotlib.pyplot as plt
+from pytorch_lightning.utilities import rank_zero_only
+from pytorch_lightning.callbacks import ModelCheckpoint
+import pytorch_lightning.loggers as pl_loggers
 import cv2,rawpy
 
 ##########################
 # Generic util functions #
 ##########################
 
-def set_random_seed(seed):
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-
 def init_experiment(cfg):
-    # Set random seed
-    # if cfg.mode == 'test' and cfg.random_seed is None:
-    #     cfg.random_seed = 0
-    if cfg.random_seed is not None:
-        set_random_seed(cfg.random_seed)
-
-    # set datetime
+    # set date_time_model
     if cfg.load.ckpt_path == None:
         ckpt_filename = 'initial'
         cfg.path.date_time_model = time.strftime(cfg.path.time_format,time.localtime(time.time())) + '_' + \
@@ -36,16 +24,14 @@ def init_experiment(cfg):
             ckpt_filename = 'resume_' + os.path.basename(cfg.load.ckpt_path).split('.')[0]
         elif cfg.mode == 'test':
             ckpt_filename = 'test_' + os.path.basename(cfg.load.ckpt_path).split('.')[0]
+        # set date_time_model from ckpt_path
         if 'backups' in cfg.load.ckpt_path:
             cfg.path.date_time_model = cfg.load.ckpt_path.split('/')[6]
         else:
             cfg.path.date_time_model = cfg.load.ckpt_path.split('/')[2]
-
-    if 'finetune' in cfg.model.solver:
-        ckpt_filename += f'_finetune_{cfg.camera}'
     
     # set path
-    cfg.path.log_path = os.path.join(cfg.path.log_root, cfg.path.date_time_model)
+    cfg.path.log_path = '../logs'
     cfg.path.ckpt_path = os.path.join(cfg.path.ckpt_root, cfg.path.date_time_model,ckpt_filename)
     cfg.path.result_path = os.path.join(cfg.path.result_root,cfg.path.date_time_model,ckpt_filename)
     
@@ -121,6 +107,7 @@ def get_callbacks(cfg):
     
     return callbacks
 
+@rank_zero_only
 def get_logger(cfg):
     # return custom logger
     logger = None
@@ -129,7 +116,7 @@ def get_logger(cfg):
         logger = pl_loggers.WandbLogger(
             project=cfg.project_name,
             name=cfg.exp_name,
-            save_dir=cfg.path.log_path,
+            save_dir='../wandb_logs',
         )
         # update wandb config
         # logger.experiment.config.update(OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True))

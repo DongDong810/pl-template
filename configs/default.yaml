@@ -3,7 +3,9 @@ exp_name: 'EXP_NAME'
 
 # environment
 mode: train # [train / test]
-devices: ~
+devices: 2  # ex) integer or list (2, [0,1,2,3]...)
+            #     N of process if accelerator is cpu,
+            #     N of gpu if accelerator is gpu
 random_seed: ~
 backup_host: 'ciplab@165.132.106.202'
 backup_target: '/media/ssd2/backups/Slot-IID/'
@@ -31,7 +33,7 @@ load:
   load_state: true  # if true, load net,optimizer,scheduler,epoch. if false, load only network
   
 logger: # print & save log / tensorboard & wandb logging
-  use_wandb: false
+  use_wandb: true
   log_every_n_steps: 50
 
 train:

@@ -1,15 +1,16 @@
-import sys,os,random,torch,importlib
+import sys,os,random,torch,importlib,time
 import torch.nn as nn
 import wandb
+import torch.distributed as dist
 from omegaconf import OmegaConf
+from pytorch_lightning.utilities.rank_zero import rank_zero_only
 
 sys.path.insert(1,os.path.abspath('..'))
 sys.path.insert(1,os.path.abspath('../../'))
-from utils.setup import set_random_seed,init_experiment,get_callbacks,get_logger,get_trainer_args
+from utils.setup import init_experiment,get_callbacks,get_logger,get_trainer_args
 from datasets.example_dataset import get_loader
 from criterions.criterion import MasterCriterion
-import lightning.pytorch as pl
-from lightning.pytorch import loggers as pl_loggers
+import pytorch_lightning as pl
 
 if __name__ == '__main__':
     # import default config file
@@ -29,9 +30,9 @@ if __name__ == '__main__':
 
     # Dataloader
     dataloader = {
-        'train': get_loader(cfg,'train'),
-        'valid': get_loader(cfg,'valid'),
-        'test' : get_loader(cfg,'test')
+        'train': get_loader(cfg,'train') if cfg.mode == 'train' else None,
+        'valid': get_loader(cfg,'valid') if cfg.mode == 'train' else None,
+        'test' : get_loader(cfg,'test') if cfg.mode == 'test' else None
     }
     
     # Dynamic Model module import
@@ -50,12 +51,13 @@ if __name__ == '__main__':
     # Load Network if ckpt_path is given
     if cfg.load.ckpt_path is not None:
         solver.load_from_checkpoint(cfg.load.ckpt_path)
-
+    
+    # Init trainer
     trainer_args = get_trainer_args(cfg)
     trainer = pl.Trainer(**trainer_args)
-    
-    if trainer.global_rank == 0:
-        trainer.logger.experiment.config.update(OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True))
+
+    # if trainer.global_rank == 0:
+    #     trainer.logger.experiment.config.update(OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True))
 
     if cfg.mode == 'train':
         trainer.fit(
