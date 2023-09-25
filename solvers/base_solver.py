@@ -8,13 +8,9 @@ import subprocess
 from subprocess import DEVNULL, STDOUT
 
 class BaseSolver(pl.LightningModule):
-    def __init__(self,cfg,net,criterion):
+    def __init__(self,net,loss,**cfg):
         super().__init__()
-        # basic config
-        self.cfg = cfg
-        self.net = net
-        self.criterion = criterion
-        self.epoch = -1
+        self.save_hyperparameters(ignore=['net','loss'])
 
         # init best value & model dict
         # [Note] This code is not used for pytorch-lightning : use checkpoint_callback

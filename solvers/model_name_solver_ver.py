@@ -2,15 +2,17 @@ import torch,wandb,random
 import torch.nn as nn
 import os.path as osp
 import numpy as np
+from omegaconf import OmegaConf
 from solvers.base_solver import BaseSolver
 from datasets.example_dataset import get_loader
 
 class Solver(BaseSolver):
-    def __init__(self,cfg,net,criterion):
-        super().__init__(cfg,net,criterion)
-        self.cfg = cfg
+    def __init__(self,net,loss,**cfg):
+        super().__init__(net=net,loss=loss,**cfg)
+        self.save_hyperparameters(ignore=['net','loss'])
+        self.cfg = OmegaConf.create(cfg)
         self.net = net
-        self.criterion = criterion
+        self.loss = loss
     
     def training_step(self, batch_dict, batch_idx):
         x = batch_dict['x']
@@ -20,7 +22,7 @@ class Solver(BaseSolver):
         ret_dict = self.net(x)
 
         # loss
-        loss_dict = self.criterion(ret_dict,batch_dict,'train')
+        loss_dict = self.loss(ret_dict,batch_dict,'train')
 
         # log
         self.log_dict(
@@ -42,7 +44,7 @@ class Solver(BaseSolver):
         ret_dict = self.net(x)
 
         # loss
-        loss_dict = self.criterion(ret_dict,batch_dict,'val')
+        loss_dict = self.loss(ret_dict,batch_dict,'val')
 
         # log
         self.log_dict(
