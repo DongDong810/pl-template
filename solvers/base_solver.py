@@ -17,13 +17,14 @@ class BaseSolver(pl.LightningModule):
         self.epoch = -1
 
         # init best value & model dict
-        self.best_value = {}
-        for key_criteria in self.cfg.saver.monitor_keys:
-            key,criteria = key_criteria.split('/')
-            if criteria == 'l':
-                self.best_value[key] = 987654321
-            elif criteria == 'h':
-                self.best_value[key] = -987654321
+        # [Note] This code is not used for pytorch-lightning : use checkpoint_callback
+        # self.best_value = {}
+        # for key_criteria in self.cfg.saver.monitor_keys:
+        #     key,criteria = key_criteria.split('/')
+        #     if criteria == 'l':
+        #         self.best_value[key] = 987654321
+        #     elif criteria == 'h':
+        #         self.best_value[key] = -987654321
 
     def training_step(self, batch_dict, batch_idx):
         raise NotImplementedError()

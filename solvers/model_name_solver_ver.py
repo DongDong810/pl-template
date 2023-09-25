@@ -23,9 +23,14 @@ class Solver(BaseSolver):
         loss_dict = self.criterion(ret_dict,batch_dict,'train')
 
         # log
-        self.log_dict(loss_dict,
-                      prog_bar=True,
-                      rank_zero_only=True,)
+        self.log_dict(
+            loss_dict,
+            on_step=True,
+            on_epoch=True,
+            sync_dist=True,
+            prog_bar=True,
+            rank_zero_only=True,
+        )
         
         return loss_dict['train-total_loss']
     
@@ -40,13 +45,14 @@ class Solver(BaseSolver):
         loss_dict = self.criterion(ret_dict,batch_dict,'val')
 
         # log
-        self.log_dict(loss_dict,
-                      prog_bar=True,
-                      rank_zero_only=True,)
+        self.log_dict(
+            loss_dict,
+            on_step=False,
+            on_epoch=True,
+            sync_dist=True,
+            prog_bar=True,
+            rank_zero_only=True,
+        )
     
     def test_step(self, batch_dict, batch_idx):
-        x = batch_dict['x']
-        y = batch_dict['y']
-
-        # forward
-        y_hat = self.net(x)
+        self.validation_step(batch_dict,batch_idx)

@@ -13,6 +13,7 @@ import cv2,rawpy
 # Generic util functions #
 ##########################
 
+@rank_zero_only
 def init_experiment(cfg):
     # set date_time_model
     if cfg.load.ckpt_path == None:
@@ -61,18 +62,25 @@ def get_scheduler(sched_mode, optimizer, **sched_params):
 def get_trainer_args(cfg):
     trainer_args = {}
 
+    # env
     trainer_args['devices'] = cfg.devices
     trainer_args['accelerator'] = "auto"
+
+    # training
+    trainer_args['max_epochs'] = cfg.train.end_epoch
+    trainer_args['check_val_every_n_epoch'] = cfg.train.check_val_every_n_epoch
+
+    # logging
     trainer_args['logger'] = get_logger(cfg)
     trainer_args['log_every_n_steps'] = cfg.logger.log_every_n_steps
-    trainer_args['check_val_every_n_epoch'] = cfg.train.check_val_every_n_epoch
+    
+    # callbacks
     trainer_args['callbacks'] = get_callbacks(cfg)
 
     return trainer_args
     
 def get_callbacks(cfg):
     # return custom callbacks
-
     callbacks = []
 
     # model checkpoint callbacks using criterion
@@ -107,7 +115,6 @@ def get_callbacks(cfg):
     
     return callbacks
 
-@rank_zero_only
 def get_logger(cfg):
     # return custom logger
     logger = None
@@ -116,7 +123,7 @@ def get_logger(cfg):
         logger = pl_loggers.WandbLogger(
             project=cfg.project_name,
             name=cfg.exp_name,
-            save_dir='../wandb_logs',
+            save_dir='../logs/',
         )
         # update wandb config
         # logger.experiment.config.update(OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True))

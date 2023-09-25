@@ -26,6 +26,7 @@ if __name__ == '__main__':
     cfg = OmegaConf.merge(cfg,cfg_cmd)
 
     # Path configuration & generation
+    # [Important] This function is only done in master process!!!
     init_experiment(cfg)
 
     # Dataloader
