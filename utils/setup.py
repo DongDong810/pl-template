@@ -14,7 +14,7 @@ import cv2,rawpy
 ##########################
 
 @rank_zero_only
-def init_experiment(cfg):
+def init_path_and_expname(cfg):
     # set date_time_model
     if cfg.load.ckpt_path == None:
         ckpt_filename = 'initial'
@@ -112,6 +112,8 @@ def get_callbacks(cfg):
             every_n_epochs=cfg.saver.save_every_n_epoch
         )
     )
+
+    # you can add early stopping callback here (https://lightning.ai/docs/pytorch/stable/common/early_stopping.html)
     
     return callbacks
 

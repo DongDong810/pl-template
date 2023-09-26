@@ -7,7 +7,7 @@ from pytorch_lightning.utilities.rank_zero import rank_zero_only
 
 sys.path.insert(1,os.path.abspath('..'))
 sys.path.insert(1,os.path.abspath('../../'))
-from utils.setup import init_experiment,get_callbacks,get_logger,get_trainer_args
+from utils.setup import init_path_and_expname,get_callbacks,get_logger,get_trainer_args
 from datasets.example_dataset import get_loader
 from criterions.criterion import MasterCriterion
 import pytorch_lightning as pl
@@ -25,9 +25,9 @@ if __name__ == '__main__':
     # merge cfg from command line
     cfg = OmegaConf.merge(cfg,cfg_cmd)
 
-    # Path configuration & generation
-    # [Important] This function is only done in master process!!!
-    init_experiment(cfg)
+    # Path and exp_name configuration
+    init_path_and_expname(cfg)      # This function is only done in master process
+    pl.seed_everything(cfg.seed)
 
     # Dataloader
     dataloader = {

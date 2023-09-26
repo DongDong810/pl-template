@@ -2,6 +2,7 @@ project_name: SAMPLE_PROJECT
 exp_name: 'EXP_NAME'
 
 # environment
+seed: 160122
 mode: train # [train / test]
 devices: 2  # ex) integer or list (2, [0,1,2,3]...)
             #     N of process if accelerator is cpu,
