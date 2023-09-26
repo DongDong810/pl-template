@@ -4,7 +4,6 @@ import torch.nn as nn
 import os.path as osp
 import numpy as np
 from omegaconf import OmegaConf
-from solvers.base_solver import BaseSolver
 from datasets.example_dataset import get_loader
 from utils.setup import get_optimizer, get_scheduler
 
