@@ -22,6 +22,7 @@ test:
   visualize_result: false
   
 data:
+  name: 'example_dataset'
   root: 'DATA_PATH_FOR_THIS_MODEL'
   batch_size: 10
   num_workers: 8
