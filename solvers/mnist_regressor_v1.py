@@ -1,4 +1,8 @@
 import pytorch_lightning as pl
+import torch,wandb,random
+import torch.nn as nn
+import os.path as osp
+import numpy as np
 from omegaconf import OmegaConf
 from utils.setup import get_optimizer, get_scheduler
 
@@ -11,14 +15,14 @@ class Solver(pl.LightningModule):
         self.loss = loss
     
     def training_step(self, batch, batch_idx):
-        x = batch['x']
-        y = batch['y']
+        x,y = batch
+        batch_dict = {'x':x,'y':y}
 
         # forward
         ret_dict = self.net(x)
 
         # loss
-        loss_dict = self.loss(ret_dict,batch,'train')
+        loss_dict = self.loss(ret_dict,batch_dict,'train')
 
         # log
         self.log_dict(
@@ -33,14 +37,14 @@ class Solver(pl.LightningModule):
         return loss_dict['train-total_loss']
     
     def validation_step(self, batch, batch_idx):
-        x = batch['x']
-        y = batch['y']
+        x,y = batch
+        batch_dict = {'x':x,'y':y}
 
         # forward
         ret_dict = self.net(x)
 
         # loss
-        loss_dict = self.loss(ret_dict,batch,'val')
+        loss_dict = self.loss(ret_dict,batch_dict,'val')
 
         # log
         self.log_dict(

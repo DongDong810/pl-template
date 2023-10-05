@@ -13,6 +13,7 @@ class MasterCriterion(nn.Module):
         
         self.mod_dict = {}
         self.mod_dict['l1_loss'] = L1_loss(cfg)
+        self.mod_dict['cross_entropy'] = Cross_entropy(cfg)
 
     def forward(self, pred_dict, gt_dict, phase):
         
@@ -39,5 +40,16 @@ class L1_loss(nn.Module):
 
     def forward(self, pred_dict, gt_dict):
         loss = self.L1(pred_dict['y_hat'], gt_dict['y'])
+
+        return loss
+    
+class Cross_entropy(nn.Module):
+    def __init__(self,cfg) -> None:
+        super().__init__()
+        self.cfg = cfg
+        self.cross_entropy = nn.CrossEntropyLoss()
+
+    def forward(self, pred_dict, gt_dict):
+        loss = self.cross_entropy(pred_dict['y_hat'], gt_dict['y'])
 
         return loss

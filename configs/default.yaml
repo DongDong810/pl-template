@@ -69,3 +69,6 @@ criterion:
   l1_loss:
     mod: 'l1_loss'
     alpha: 1.
+  cross_entropy:
+    mod: 'cross_entropy'
+    alpha: 1.
