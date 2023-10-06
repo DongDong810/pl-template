@@ -63,7 +63,7 @@ def get_trainer_args(cfg):
     trainer_args = {}
 
     # env
-    trainer_args['devices'] = cfg.devices
+    trainer_args['devices'] = cfg.devices if cfg.mode == 'train' else 1
     trainer_args['accelerator'] = "auto"
 
     # training

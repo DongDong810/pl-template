@@ -72,5 +72,5 @@ if __name__ == '__main__':
     elif cfg.mode == 'test':
         trainer.test(
             model=solver,
-            test_dataloaders=dataloader['test']
+            dataloaders=dataloader['test']
         )
