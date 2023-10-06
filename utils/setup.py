@@ -16,25 +16,35 @@ import cv2,rawpy
 @rank_zero_only
 def init_path_and_expname(cfg):
     # set date_time_model
-    if cfg.load.ckpt_path == None:
-        ckpt_filename = 'initial'
-        cfg.path.date_time_model = time.strftime(cfg.path.time_format,time.localtime(time.time())) + '_' + \
-                                    cfg.model.name + '_' + cfg.model.ver
-    else:
-        if cfg.mode == 'train':
-            ckpt_filename = 'resume_' + os.path.basename(cfg.load.ckpt_path).split('.')[0]
-        elif cfg.mode == 'test':
-            ckpt_filename = 'test_' + os.path.basename(cfg.load.ckpt_path).split('.')[0]
-        # set date_time_model from ckpt_path
+    if cfg.load.ckpt_path != None and cfg.load.load_state:
         if 'backups' in cfg.load.ckpt_path:
             cfg.path.date_time_model = cfg.load.ckpt_path.split('/')[6]
         else:
             cfg.path.date_time_model = cfg.load.ckpt_path.split('/')[2]
+    else:
+        cfg.path.date_time_model = time.strftime(cfg.path.time_format,time.localtime(time.time())) + '_' + \
+                                    cfg.model.name + '_' + cfg.model.ver
+
+
+    # if cfg.load.ckpt_path == None:
+    #     ckpt_dirname = 'initial'
+    #     cfg.path.date_time_model = time.strftime(cfg.path.time_format,time.localtime(time.time())) + '_' + \
+    #                                 cfg.model.name + '_' + cfg.model.ver
+    # if cfg.load.ckpt_path != None and cfg.load.load_state :
+    #     if cfg.mode == 'train' and cfg.load.load_state:
+    #         ckpt_dirname = 'resume_' + os.path.basename(cfg.load.ckpt_path).split('.')[0]
+    #     elif cfg.mode == 'test':
+    #         ckpt_dirname = 'test_' + os.path.basename(cfg.load.ckpt_path).split('.')[0]
+    #     # set date_time_model from ckpt_path
+    #     if 'backups' in cfg.load.ckpt_path:
+    #         cfg.path.date_time_model = cfg.load.ckpt_path.split('/')[6]
+    #     else:
+    #         cfg.path.date_time_model = cfg.load.ckpt_path.split('/')[2]
     
     # set path
     cfg.path.log_path = '../logs'
-    cfg.path.ckpt_path = os.path.join(cfg.path.ckpt_root, cfg.path.date_time_model,ckpt_filename)
-    cfg.path.result_path = os.path.join(cfg.path.result_root,cfg.path.date_time_model,ckpt_filename)
+    cfg.path.ckpt_path = os.path.join(cfg.path.ckpt_root, cfg.path.date_time_model)
+    cfg.path.result_path = os.path.join(cfg.path.result_root,cfg.path.date_time_model)
     
     # make directories
     if cfg.mode == 'train':
