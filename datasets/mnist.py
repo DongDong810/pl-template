@@ -14,5 +14,5 @@ def get_loader(cfg, phase):
                                      transforms.ToTensor(),
                                      transforms.Normalize((0.1307,), (0.3081,))
                                  ]))
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=cfg.data.batch_size, shuffle=True)
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=cfg.data.batch_size, shuffle=True if phase == 'train' else False, num_workers=cfg.data.num_workers)
     return dataloader
