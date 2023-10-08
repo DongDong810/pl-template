@@ -24,22 +24,6 @@ def init_path_and_expname(cfg):
     else:
         cfg.path.date_time_model = time.strftime(cfg.path.time_format,time.localtime(time.time())) + '_' + \
                                     cfg.model.name + '_' + cfg.model.ver
-
-
-    # if cfg.load.ckpt_path == None:
-    #     ckpt_dirname = 'initial'
-    #     cfg.path.date_time_model = time.strftime(cfg.path.time_format,time.localtime(time.time())) + '_' + \
-    #                                 cfg.model.name + '_' + cfg.model.ver
-    # if cfg.load.ckpt_path != None and cfg.load.load_state :
-    #     if cfg.mode == 'train' and cfg.load.load_state:
-    #         ckpt_dirname = 'resume_' + os.path.basename(cfg.load.ckpt_path).split('.')[0]
-    #     elif cfg.mode == 'test':
-    #         ckpt_dirname = 'test_' + os.path.basename(cfg.load.ckpt_path).split('.')[0]
-    #     # set date_time_model from ckpt_path
-    #     if 'backups' in cfg.load.ckpt_path:
-    #         cfg.path.date_time_model = cfg.load.ckpt_path.split('/')[6]
-    #     else:
-    #         cfg.path.date_time_model = cfg.load.ckpt_path.split('/')[2]
     
     # set path
     cfg.path.log_path = '../logs'

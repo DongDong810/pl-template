@@ -58,8 +58,6 @@ if __name__ == '__main__':
     # Init trainer
     trainer_args = get_trainer_args(cfg)
     trainer = pl.Trainer(**trainer_args)
-    # save hyperparameters
-    # trainer.logger.experiment.config.update(OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True))
 
     if cfg.mode == 'train':
         trainer.fit(

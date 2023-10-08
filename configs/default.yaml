@@ -31,7 +31,8 @@ model:
 
 load:
   ckpt_path: ~      # '../ckpts/220314_1317/refactor_testing_best_MAE_illum.pt'
-  load_state: true  # if true, load net,optimizer,scheduler,epoch. if false, load only network
+  load_state: true  # if true, load everything and continue training. 
+                    # if false, load only network parameters
   
 logger: # print & save log / tensorboard & wandb logging
   use_wandb: true
