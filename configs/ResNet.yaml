@@ -1,5 +1,6 @@
+# Model
 model:
-  name: mnist_regressor
+  name: ResNet
 
 train:
   # Epoch
@@ -23,7 +24,7 @@ test:
   
 data:
   name: 'mnist'
-  root: '../../dataset/mnist/'
+  root: '../../dataset/mnist/' # {DATA_PATH_FOR_THIS_MODEL} -> load or store
   batch_size: 10
   num_workers: 8
 

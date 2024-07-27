@@ -10,12 +10,13 @@ sys.path.insert(1,os.path.abspath('../../'))
 from utils.setup import init_path_and_expname,get_callbacks,get_logger,get_trainer_args
 from datasets.unified_loader import get_loader
 from criterions.criterion import MasterCriterion
+from torchsummary import summary
 import pytorch_lightning as pl
 
 if __name__ == '__main__':
     # import default config file
     cfg = OmegaConf.merge(OmegaConf.load(f'../configs/default.yaml'),OmegaConf.load('../configs/env.yaml'))
-    # read from command line
+    # read from command line -- ex) python3 main.py model.name=resnet50
     cfg_cmd = OmegaConf.from_cli()
     # merge model specific config file
     if "model" in cfg_cmd  and 'name' in cfg_cmd.model:
@@ -53,8 +54,11 @@ if __name__ == '__main__':
     
     # Load Network if ckpt_path is given
     if cfg.load.ckpt_path is not None:
-        solver = solver.load_from_checkpoint(cfg.load.ckpt_path, net=network, loss=loss)
+        solver = solver_class.load_from_checkpoint(cfg.load.ckpt_path, net=network, loss=loss)
     
+    # summary(network, (1, 28, 28)) # (in_channels, image height, image width)
+
+
     # Init trainer
     trainer_args = get_trainer_args(cfg)
     trainer = pl.Trainer(**trainer_args)

@@ -1,9 +1,11 @@
-project_name: SAMPLE_PROJECT
-exp_name: 'EXP_NAME'
+servername: s32
 
-# environment
+project_name: ResNet_MNIST # (just name)
+exp_name: 'exp_1' # (just name)
+
+# Environment
 seed: 160122
-mode: train # [train / test]
+mode: test # [train / test]
 devices: 2  # ex) integer or list (2, [0,1,2,3]...)
             #     N of process if accelerator is cpu,
             #     N of gpu if accelerator is gpu
@@ -25,14 +27,14 @@ path:
   result_path: ~  # visualization or else...
 
 model:
-  name: model_name
-  ver: model_ver
-  solver: solver_ver
+  name: ResNet # {model_name}
+  ver: v1 # {model_ver}
+  solver: v1 # {sorver_ver}
 
 load:
-  ckpt_path: ~      # '../ckpts/220314_1317/refactor_testing_best_MAE_illum.pt'
-  load_state: true  # if true, load everything and continue training. 
-                    # if false, load only network parameters
+  ckpt_path: '../ckpts/240727_114542_ResNet_v1/last.ckpt'  # '../ckpts/220314_1317/refactor_testing_best_MAE_illum.pt'
+  load_state: false  # if true, load everything and continue training (training phase)
+                    # if false, load only network parameters (testing phase)
   
 logger: # print & save log / tensorboard & wandb logging
   use_wandb: true
