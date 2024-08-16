@@ -1,17 +1,17 @@
-servername: s32
+servername: s30   # server name
 
-project_name: ResNet_MNIST # (just name)
-exp_name: 'exp_1' # (just name)
+project_name: FC4 # project name (for wandb)
+exp_name: 'exp_1' # experiment name (for wandb)
 
 # Environment
-seed: 160122
-mode: test # [train / test]
-devices: 2  # ex) integer or list (2, [0,1,2,3]...)
-            #     N of process if accelerator is cpu,
-            #     N of gpu if accelerator is gpu
-random_seed: ~
+seed: 160122  # random seed (for reproducibility)
+mode: train   # {train / test}
+devices: 2    # ex) integer or list (2, [0,1,2,3]...)
+              # N of process if accelerator is cpu
+              # N of gpu if accelerator is gpu
 backup_host: 'ciplab@165.132.106.202'
 backup_target: '/media/ssd2/backups/Slot-IID/'
+
 
 path:
   time_format: '%y%m%d_%H%M%S'
@@ -26,24 +26,27 @@ path:
   ckpt_path: ~    # model & training state checkpoint
   result_path: ~  # visualization or else...
 
+# Model
 model:
-  name: ResNet # {model_name}
-  ver: v1 # {model_ver}
-  solver: v1 # {sorver_ver}
+  name: ~ # {model_name}
+  ver: ~ # {model_ver}
+  solver: ~ # {sorver_ver}
 
+# Loading ckpt
 load:
-  ckpt_path: '../ckpts/240727_114542_ResNet_v1/last.ckpt'  # '../ckpts/220314_1317/refactor_testing_best_MAE_illum.pt'
   load_state: false  # if true, load everything and continue training (training phase)
-                    # if false, load only network parameters (testing phase)
-  
-logger: # print & save log / tensorboard & wandb logging
+                     # if false, load only network parameters (testing phase)
+  ckpt_path: ~  # ex) '../ckpts/220314_1317/refactor_testing_best_MAE_illum.pt'
+
+# Logger for printing & saving (tensorboard & wandb)  
+logger:
   use_wandb: true
-  log_every_n_steps: 50
+  log_every_n_steps: 20
 
 train:
   optimizer:
     adam:
-      lr: 1e-4
+      lr: 3e-4
       betas:
         - 0.9
         - 0.999
@@ -68,10 +71,14 @@ train:
       eps: 1e-08
     monitor: 'train-total_loss'  # metric to monitor (only for ReduceLROnPlateau)
 
+# List of loss terms for weighted sum (criterion.py)
 criterion:
   l1_loss:
     mod: 'l1_loss'
     alpha: 1.
   cross_entropy:
     mod: 'cross_entropy'
+    alpha: 1.
+  angular_loss:
+    mod: 'angular_loss'
     alpha: 1.

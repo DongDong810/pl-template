@@ -1,11 +1,13 @@
+# Model
 model:
-  name: model_name
+  name: FC4
 
+# Train
 train:
   # Epoch
   start_epoch: 0
-  end_epoch: 10
-  check_val_every_n_epoch: 10  # run validation every n epoch
+  end_epoch: 2000
+  check_val_every_n_epoch: 5  # run validation every n epoch
 
   # Optimizer & Scheduler mode
   optimizer:
@@ -22,15 +24,15 @@ test:
   visualize_result: false
   
 data:
-  name: 'example_dataset'
-  root: 'DATA_PATH_FOR_THIS_MODEL'
-  batch_size: 10
+  name: 'colorchecker'       # just a name
+  root: '../data/gehler/'    # {DATA_PATH_FOR_THIS_MODEL}
+  batch_size: 16
   num_workers: 8
 
 criterion:
   key_pairs:
-    # list of loss terms for this model
-    - 'l1_loss'
+    # list of loss terms for this model (criterion.py)
+    - 'angular_loss'
 
 saver:  # save model ckpt, training state
   monitor_keys:
@@ -38,3 +40,8 @@ saver:  # save model ckpt, training state
     - 'val-total_loss/l'   # low total loss is good
   save_every_n_epoch: 10   # checkpoint auto save interval
   backup_every_n_epoch: 100 # backup interval
+
+# Extra for model
+
+
+

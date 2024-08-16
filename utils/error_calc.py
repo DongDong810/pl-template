@@ -82,3 +82,4 @@ def get_SSIM(pred, GT, white_level):
         GT = np.clip(GT, 0, white_level)
 
     return ssim(pred, GT, multichannel=True, data_range=white_level)
+

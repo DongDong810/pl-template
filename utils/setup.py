@@ -1,21 +1,20 @@
+import os, math, random, time, torch, wandb, cv2, rawpy
+
 import numpy as np
-import wandb
+import pytorch_lightning.loggers as pl_loggers
+
 from omegaconf import OmegaConf
-import math
-import random,torch,time,os
 from torch.optim import lr_scheduler
 from pytorch_lightning.utilities import rank_zero_only
 from pytorch_lightning.callbacks import ModelCheckpoint
-import pytorch_lightning.loggers as pl_loggers
-import cv2,rawpy
 
 ##########################
 # Generic util functions #
 ##########################
 
-@rank_zero_only
+@rank_zero_only  # only done in master process!
 def init_path_and_expname(cfg):
-    # set date_time_model
+    # Set date_time_model
     if cfg.load.ckpt_path != None and cfg.load.load_state:
         if 'backups' in cfg.load.ckpt_path:
             cfg.path.date_time_model = cfg.load.ckpt_path.split('/')[6]
@@ -25,18 +24,18 @@ def init_path_and_expname(cfg):
         cfg.path.date_time_model = time.strftime(cfg.path.time_format,time.localtime(time.time())) + '_' + \
                                     cfg.model.name + '_' + cfg.model.ver
     
-    # set path
+    # Set path for log, checkpoint, result
     cfg.path.log_path = '../logs'
     cfg.path.ckpt_path = os.path.join(cfg.path.ckpt_root, cfg.path.date_time_model)
     cfg.path.result_path = os.path.join(cfg.path.result_root,cfg.path.date_time_model)
     
-    # make directories
+    # Make directories
     if cfg.mode == 'train':
         os.makedirs(cfg.path.log_path, exist_ok=True)
     os.makedirs(cfg.path.ckpt_path, exist_ok=True)
     os.makedirs(cfg.path.result_path, exist_ok=True)
 
-    # set experiment name
+    # Set experiment name
     cfg.exp_name = f'{cfg.servername}/{cfg.path.date_time_model}'
 
 def get_optimizer(opt_mode, net_params, **opt_params):
@@ -111,20 +110,23 @@ def get_callbacks(cfg):
     
     return callbacks
 
+
 def get_logger(cfg):
-    # return custom logger
+    # Return custom logger
     logger = None
 
     if cfg.logger.use_wandb:
+        # use wandb logger
         logger = pl_loggers.WandbLogger(
             project=cfg.project_name,
             name=cfg.exp_name,
             save_dir='../logs/',
         )
         # update wandb config
-        # logger.experiment.config.update(OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True))
+        logger.experiment.config.update(OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True))
 
     else:
+        # use tensorboard logger
         logger = pl_loggers.TensorBoardLogger(
             save_dir=cfg.path.log_path,
             name=cfg.exp_name,

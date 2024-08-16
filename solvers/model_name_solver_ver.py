@@ -3,16 +3,17 @@ from omegaconf import OmegaConf
 from utils.setup import get_optimizer, get_scheduler
 
 class Solver(pl.LightningModule):
-    def __init__(self,net,loss,**cfg):
+    def __init__(self, net, loss, **cfg):
         super().__init__()
         self.save_hyperparameters(ignore=['net','loss'])
         self.cfg = OmegaConf.create(cfg)
         self.net = net
         self.loss = loss
     
+
     def training_step(self, batch, batch_idx):
-        x = batch['x']
-        y = batch['y']
+        x = batch['x']  # input
+        y = batch['y']  # target GT
 
         # forward
         ret_dict = self.net(x)
@@ -32,9 +33,10 @@ class Solver(pl.LightningModule):
         
         return loss_dict['train-total_loss']
     
+
     def validation_step(self, batch, batch_idx):
-        x = batch['x']
-        y = batch['y']
+        x = batch['x']  # input
+        y = batch['y']  # target GT
 
         # forward
         ret_dict = self.net(x)
@@ -52,8 +54,10 @@ class Solver(pl.LightningModule):
             rank_zero_only=True,
         )
     
+
     def test_step(self, batch, batch_idx):
-        self.validation_step(batch,batch_idx)
+        self.validation_step(batch, batch_idx)
+
 
     def configure_optimizers(self):
         # get optimizer and scheduler
@@ -75,3 +79,4 @@ class Solver(pl.LightningModule):
                 'monitor': self.cfg.train.scheduler.monitor,
             }
         }
+    
